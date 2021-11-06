@@ -5,10 +5,11 @@
   "license": "",
   "scripts": {
     "build": "remix build",
-    "dev": "remix watch",
-    "postinstall": "remix setup node",
-    "start": "cross-env NODE_ENV=production node server/index.js",
-    "start:dev": "cross-env NODE_ENV=development node server/index.js"
+    "dev:remix": "remix watch",
+    "dev:server": "cross-env NODE_ENV=development node server/index.js",
+    "dev": "yarn run dev:remix & yarn run dev:server",
+    "prod:start": "cross-env NODE_ENV=production node server/index.js",
+    "postinstall": "remix setup node"
   },
   "dependencies": {
     "@remix-run/react": "^0.20.1",
