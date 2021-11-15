@@ -6,6 +6,7 @@
     "jsx": "react-jsx",
     "moduleResolution": "node",
     "target": "ES2019",
+    "sourceMap": true,
     "strict": true,
     "paths": {
       "~/*": ["./app/*"]
@@ -15,3 +16,5 @@
     "noEmit": true
   }
 }
+
+
