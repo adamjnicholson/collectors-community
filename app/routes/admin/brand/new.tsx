@@ -1,5 +1,5 @@
 import { Form, ActionFunction, redirect } from "remix";
-import prisma from "../../../db";
+import prisma from "~/db";
 
 export const action: ActionFunction = async ({ request }) => {
     const body = new URLSearchParams(await request.text());

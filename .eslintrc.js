@@ -6,6 +6,7 @@ module.exports = {
     extends: [
         "plugin:react/recommended",
         "airbnb",
+        "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
         "prettier",
     ],
@@ -14,10 +15,10 @@ module.exports = {
         ecmaFeatures: {
             jsx: true,
         },
-        ecmaVersion: 13,
+        ecmaVersion: "latest",
         sourceType: "module",
     },
-    plugins: ["react", "@typescript-eslint"],
+    plugins: ["react", "@typescript-eslint", "import"],
     rules: {
         "react/jsx-filename-extension": [
             "error",
@@ -43,5 +44,14 @@ module.exports = {
         "react/require-default-props": "off",
         "@typescript-eslint/no-unused-vars": "error",
         "no-console": "error",
+    },
+    settings: {
+        "import/resolver": {
+            typescript: {},
+            node: {
+                extensions: [".js", ".jsx", ".ts", ".tsx"],
+                paths: ["./app"],
+            },
+        },
     },
 };

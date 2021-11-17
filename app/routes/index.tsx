@@ -8,7 +8,7 @@ import {
     Form,
 } from "remix";
 
-import prisma from "../db";
+import prisma from "~/db";
 
 import stylesUrl from "../styles/index.css";
 
