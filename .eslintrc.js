@@ -20,9 +20,9 @@ module.exports = {
     plugins: ["react", "@typescript-eslint"],
     rules: {
         "react/jsx-filename-extension": [
-            1,
+            "error",
             {
-                extensions: [".jsx", ".tsx", ".js", ".ts"],
+                extensions: [".tsx"],
             },
         ],
         "import/extensions": [
@@ -39,17 +39,7 @@ module.exports = {
         ],
         "react/jsx-uses-react": "off",
         "react/react-in-jsx-scope": "off",
-    },
-    settings: {
-        "import/resolver": {
-            node: {
-                extensions: [".js", ".jsx", ".ts", ".tsx"],
-                moduleDirectory: ["node_modules", "app/"],
-            },
-            alias: {
-                map: [["~/", "./app"]],
-                extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
-            },
-        },
+        "@typescript-eslint/no-unused-vars": "error",
+        "no-console": "error",
     },
 };

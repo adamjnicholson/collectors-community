@@ -1,6 +1,6 @@
 import { Brand } from "@prisma/client";
 import { LoaderFunction, Outlet, useLoaderData } from "remix";
-import { prisma } from "../../db";
+import prisma from "../../db";
 
 export const loader: LoaderFunction = async () => {
     const allBrands = await prisma.brand.findMany();
@@ -8,7 +8,7 @@ export const loader: LoaderFunction = async () => {
     return allBrands;
 };
 
-function Index() {
+export default function Index() {
     const data = useLoaderData<Brand[]>();
 
     if (!data.length) {
@@ -24,5 +24,3 @@ function Index() {
         </section>
     );
 }
-
-export default Index;
