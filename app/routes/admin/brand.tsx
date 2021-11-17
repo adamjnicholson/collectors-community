@@ -1,6 +1,6 @@
 import { Brand } from "@prisma/client";
 import { LoaderFunction, Outlet, useLoaderData } from "remix";
-import { prisma } from "../../db";
+import { prisma } from "~/db";
 
 export let loader: LoaderFunction = async () => {
   let allBrands = await prisma.brand.findMany();
