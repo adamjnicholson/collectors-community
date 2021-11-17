@@ -5,7 +5,7 @@ import {
   Scripts,
   useLoaderData,
   LiveReload,
-  useCatch
+  useCatch,
 } from "remix";
 import { Outlet } from "react-router-dom";
 
@@ -21,7 +21,7 @@ export let loader: LoaderFunction = async () => {
 
 function Document({
   children,
-  title
+  title,
 }: {
   children: React.ReactNode;
   title?: string;
