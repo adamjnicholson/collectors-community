@@ -35,3 +35,8 @@ model User {
   posts   Post[]
   profile Profile?
 }
+
+model Brand {
+  uuid String @id @default(uuid())
+  name String
+}
