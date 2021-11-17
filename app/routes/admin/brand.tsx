@@ -1,5 +1,6 @@
 import { Brand } from "@prisma/client";
 import { LoaderFunction, Outlet, useLoaderData } from "remix";
+
 import prisma from "~/db";
 
 export const loader: LoaderFunction = async () => {

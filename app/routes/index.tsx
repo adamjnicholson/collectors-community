@@ -9,8 +9,7 @@ import {
 } from "remix";
 
 import prisma from "~/db";
-
-import stylesUrl from "../styles/index.css";
+import stylesUrl from "~/styles/index.css";
 
 export const meta: MetaFunction = () => ({
     title: "Remix Starter",
@@ -29,7 +28,7 @@ export const action: ActionFunction = async ({ request }) => {
 
     if (!name || !email) {
         // handle error case
-        redirect("/");
+        return redirect("/");
     }
 
     await prisma.user.create({

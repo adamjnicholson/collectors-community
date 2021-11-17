@@ -1,4 +1,4 @@
-import type { LinksFunction, LoaderFunction } from "remix";
+import { Outlet } from "react-router-dom";
 import {
     Meta,
     Links,
@@ -6,10 +6,11 @@ import {
     useLoaderData,
     LiveReload,
     useCatch,
+    LinksFunction,
+    LoaderFunction,
 } from "remix";
-import { Outlet } from "react-router-dom";
 
-import stylesUrl from "./styles/global.css";
+import stylesUrl from "~/styles/global.css";
 
 export const links: LinksFunction = () => [
     { rel: "stylesheet", href: stylesUrl },

@@ -44,6 +44,37 @@ module.exports = {
         "react/require-default-props": "off",
         "@typescript-eslint/no-unused-vars": "error",
         "no-console": "error",
+        "import/order": [
+            "error",
+            {
+                alphabetize: {
+                    order: "asc",
+                },
+                groups: [
+                    "builtin",
+                    "external",
+                    "internal",
+                    "parent",
+                    "sibling",
+                    "object",
+                    "index",
+                    "type",
+                ],
+                "newlines-between": "always",
+                pathGroups: [
+                    {
+                        pattern: "~/**",
+                        group: "internal",
+                    },
+                ],
+            },
+        ],
+        "no-restricted-imports": [
+            "error",
+            {
+                patterns: [".*"],
+            },
+        ],
     },
     settings: {
         "import/resolver": {
