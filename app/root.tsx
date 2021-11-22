@@ -42,7 +42,9 @@ function Document({
 export default function App() {
     return (
         <Document>
-            <Outlet />
+            <div className="mx-auto min-h-screen">
+                <Outlet />
+            </div>
         </Document>
     );
 }
