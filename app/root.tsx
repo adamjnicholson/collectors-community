@@ -3,11 +3,9 @@ import {
     Meta,
     Links,
     Scripts,
-    useLoaderData,
     LiveReload,
     useCatch,
     LinksFunction,
-    LoaderFunction,
 } from "remix";
 
 import tailwindUrl from "~/styles/tailwind.css";
@@ -15,8 +13,6 @@ import tailwindUrl from "~/styles/tailwind.css";
 export const links: LinksFunction = () => [
     { rel: "stylesheet", href: tailwindUrl },
 ];
-
-export const loader: LoaderFunction = async () => ({ date: new Date() });
 
 function Document({
     children,
@@ -44,14 +40,9 @@ function Document({
 }
 
 export default function App() {
-    const data = useLoaderData();
-
     return (
         <Document>
             <Outlet />
-            <footer>
-                <p>This page was rendered at {data.date.toLocaleString()}</p>
-            </footer>
         </Document>
     );
 }

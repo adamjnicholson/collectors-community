@@ -7,13 +7,14 @@
     "build:css": "tailwindcss --output ./app/styles/tailwind.css --config ./tailwind.js --minify",
     "build:remix": "remix build",
     "build": "yarn run build:css & build:remix",
+    "db:migrate": "npx prisma migrate dev",
     "dev:css": "tailwindcss --output ./app/styles/tailwind.css --config ./tailwind.js --watch",
     "dev:remix": "remix watch",
     "dev:server": "cross-env NODE_ENV=development node server/index.js",
     "dev": "yarn run dev:remix & yarn run dev:server & yarn run dev:css",
+    "lint": "eslint --ext .ts,.tsx .",
     "prod:start": "cross-env NODE_ENV=production node server/index.js",
-    "postinstall": "remix setup node",
-    "lint": "eslint --ext .ts,.tsx ."
+    "postinstall": "remix setup node"
   },
   "dependencies": {
     "@prisma/client": "^3.4.1",
