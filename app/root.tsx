@@ -10,10 +10,10 @@ import {
     LoaderFunction,
 } from "remix";
 
-import stylesUrl from "~/styles/global.css";
+import tailwindUrl from "~/styles/tailwind.css";
 
 export const links: LinksFunction = () => [
-    { rel: "stylesheet", href: stylesUrl },
+    { rel: "stylesheet", href: tailwindUrl },
 ];
 
 export const loader: LoaderFunction = async () => ({ date: new Date() });

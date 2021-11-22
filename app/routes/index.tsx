@@ -9,7 +9,6 @@ import {
 } from "remix";
 
 import prisma from "~/db";
-import stylesUrl from "~/styles/index.css";
 
 export const meta: MetaFunction = () => ({
     title: "Remix Starter",
