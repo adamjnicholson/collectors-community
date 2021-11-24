@@ -1,5 +1,5 @@
 import { Brand } from "@prisma/client";
-import { useMatch } from "react-router-dom";
+import { useMatch, Link } from "react-router-dom";
 import { LoaderFunction, Outlet, useLoaderData } from "remix";
 
 import prisma from "~/db";
@@ -30,7 +30,25 @@ export default function Index() {
                             key={brand.uuid}
                             className="border-b border-gray-200 block"
                         >
-                            <span className="pb-2 block">{brand.name}</span>
+                            <div className="flex">
+                                <span className="pb-2 block flex-grow">
+                                    {brand.name}
+                                </span>
+                                <nav>
+                                    <ul className="flex space-x-4">
+                                        <li>
+                                            <Link to={`${brand.name}/edit`}>
+                                                <Icon icon="faPencilAlt" />
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link to={`${brand.name}/delete`}>
+                                                <Icon icon="faTrash" />
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
                         </li>
                     ))}
                 </ul>

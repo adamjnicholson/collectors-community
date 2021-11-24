@@ -1,4 +1,9 @@
-import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+    faPlus,
+    faTimes,
+    faPencilAlt,
+    faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import {
     FontAwesomeIcon,
     FontAwesomeIconProps,
@@ -9,6 +14,8 @@ import { Override } from "~/types";
 const ICONS = {
     faPlus,
     faTimes,
+    faPencilAlt,
+    faTrash,
 };
 
 type Props = Override<

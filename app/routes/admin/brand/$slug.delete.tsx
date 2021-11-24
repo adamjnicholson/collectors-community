@@ -1,0 +1,90 @@
+import { Brand } from "@prisma/client";
+import { Link, useParams } from "react-router-dom";
+import {
+    ActionFunction,
+    Form,
+    LoaderFunction,
+    redirect,
+    useCatch,
+    useLoaderData,
+} from "remix";
+
+import prisma from "~/db";
+import { Text, Button, Icon } from "~/modules/ui";
+
+export const action: ActionFunction = async ({ request }) => {
+    const body = new URLSearchParams(await request.text());
+
+    const uuid = body.get("uuid") ?? "";
+
+    await prisma.brand.delete({
+        where: {
+            uuid,
+        },
+    });
+
+    return redirect("/admin/brand");
+};
+
+type LoaderData = {
+    brand: Brand;
+};
+
+export const loader: LoaderFunction = async ({ params }) => {
+    const brand = await prisma.brand.findFirst({
+        where: {
+            name: params.slug,
+        },
+    });
+
+    if (!brand) {
+        throw new Response("Not Found", {
+            status: 404,
+        });
+    }
+
+    return { brand };
+};
+
+export default function Edit() {
+    const { brand } = useLoaderData<LoaderData>();
+    return (
+        <aside className="bg-gray-100 min-h-screen w-1/3 p-8">
+            <div className="flex">
+                <Text as="h2" className="flex-grow">
+                    Delete {brand.name}
+                </Text>
+                <Link to="/admin/brand">
+                    <Icon size="lg" icon="faTimes" />
+                </Link>
+            </div>
+            <p>Are you sure that you want to delete {brand.name}?</p>
+            <Form replace method="post">
+                <input type="hidden" name="uuid" value={brand.uuid} />
+                <div className="max-w-md pt-8">
+                    <Button type="submit">Delete {brand.name}</Button>
+                </div>
+            </Form>
+        </aside>
+    );
+}
+
+export function CatchBoundary() {
+    const params = useParams();
+    const caught = useCatch();
+
+    switch (caught.status) {
+        case 401:
+        case 404:
+            return (
+                <aside className="bg-gray-100 min-h-screen w-1/3 p-8">
+                    <Text as="h2">The brand {params.slug} does not exist</Text>
+                </aside>
+            );
+
+        default:
+            throw new Error(
+                `Unexpected caught response with status: ${caught.status}`
+            );
+    }
+}
