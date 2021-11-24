@@ -12,5 +12,6 @@ datasource db {
 
 model Brand {
   uuid String @id @default(uuid())
-  name String
+  slug String @unique
+  name String @unique
 }

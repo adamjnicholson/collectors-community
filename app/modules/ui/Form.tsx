@@ -36,10 +36,11 @@ export function InputGroup({
     htmlFor,
     children,
     label,
+    className,
     ...props
 }: InputGroupProps) {
     return (
-        <label htmlFor={htmlFor} {...props}>
+        <label htmlFor={htmlFor} className={`block ${className}`} {...props}>
             {label ? <Label>{label}</Label> : null}
             {children}
         </label>

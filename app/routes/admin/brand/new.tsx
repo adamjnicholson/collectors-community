@@ -7,19 +7,13 @@ import { InputGroup, Input, Button, Icon, Text } from "~/modules/ui";
 export const action: ActionFunction = async ({ request }) => {
     const body = new URLSearchParams(await request.text());
 
-    const brandName = body.get("name");
-
-    if (typeof brandName !== "string") {
-        return {
-            fieldErrors: {
-                name: "Please enter a valid brand name",
-            },
-        };
-    }
+    const name = body.get("name") ?? "";
+    const slug = body.get("slug") ?? "";
 
     await prisma.brand.create({
         data: {
-            name: brandName,
+            name,
+            slug,
         },
     });
 
@@ -38,14 +32,24 @@ export default function New() {
                 </Link>
             </div>
             <Form replace method="post">
-                <InputGroup htmlFor="name" label="Brand Name">
-                    <Input
-                        id="name"
-                        type="text"
-                        name="name"
-                        placeholder="Pokemon"
-                    />
-                </InputGroup>
+                <div className="space-y-4">
+                    <InputGroup htmlFor="name" label="Brand Name">
+                        <Input
+                            id="name"
+                            type="text"
+                            name="name"
+                            placeholder="Pokemon"
+                        />
+                    </InputGroup>
+                    <InputGroup htmlFor="slug" label="Slug">
+                        <Input
+                            id="slug"
+                            type="text"
+                            name="slug"
+                            placeholder="pokemon"
+                        />
+                    </InputGroup>
+                </div>
                 <div className="max-w-md pt-8">
                     <Button type="submit">Create brand</Button>
                 </div>

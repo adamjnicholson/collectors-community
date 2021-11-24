@@ -37,7 +37,7 @@ type LoaderData = {
 export const loader: LoaderFunction = async ({ params }) => {
     const brand = await prisma.brand.findFirst({
         where: {
-            name: params.slug,
+            slug: params.slug,
         },
     });
 

@@ -17,7 +17,21 @@ export default function Index() {
     const data = useLoaderData<Brand[]>();
 
     if (!data.length) {
-        return <h1>You have no brands</h1>;
+        return (
+            <div className="flex">
+                <section className="flex-grow py-8 px-16">
+                    <Text as="h2">You have no brands</Text>
+                    {isIndexRoute ? (
+                        <div className="pt-8">
+                            <LinkButton to="new">
+                                <Icon icon="faPlus" /> Add Brand
+                            </LinkButton>
+                        </div>
+                    ) : null}
+                </section>
+                <Outlet />
+            </div>
+        );
     }
 
     return (
@@ -37,12 +51,12 @@ export default function Index() {
                                 <nav>
                                     <ul className="flex space-x-4">
                                         <li>
-                                            <Link to={`${brand.name}/edit`}>
+                                            <Link to={`${brand.slug}/edit`}>
                                                 <Icon icon="faPencilAlt" />
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link to={`${brand.name}/delete`}>
+                                            <Link to={`${brand.slug}/delete`}>
                                                 <Icon icon="faTrash" />
                                             </Link>
                                         </li>
