@@ -5,6 +5,7 @@ import { Text } from "~/modules/ui";
 export default function Index() {
     return (
         <section className="flex min-h-screen">
+            {/* TODO replace with sidebar */}
             <aside className="bg-gray-100 min-h-screen w-1/6 p-8">
                 <Text as="h2">Categories</Text>
                 <nav>

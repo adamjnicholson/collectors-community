@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
 import { Form, ActionFunction, redirect } from "remix";
 
 import prisma from "~/db";
-import { InputGroup, Input, Button, Icon, Text } from "~/modules/ui";
+import { Sidebar } from "~/modules/brand";
+import { InputGroup, Input, Button } from "~/modules/ui";
 
 export const action: ActionFunction = async ({ request }) => {
     const body = new URLSearchParams(await request.text());
@@ -22,15 +22,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function New() {
     return (
-        <aside className="bg-gray-100 min-h-screen w-1/3 p-8">
-            <div className="flex">
-                <Text as="h2" className="flex-grow">
-                    Create a new brand
-                </Text>
-                <Link to="/admin/brand">
-                    <Icon size="lg" icon="faTimes" />
-                </Link>
-            </div>
+        <Sidebar title="Create a new brand">
             <Form replace method="post">
                 <div className="space-y-4">
                     <InputGroup htmlFor="name" label="Brand Name">
@@ -54,6 +46,6 @@ export default function New() {
                     <Button type="submit">Create brand</Button>
                 </div>
             </Form>
-        </aside>
+        </Sidebar>
     );
 }

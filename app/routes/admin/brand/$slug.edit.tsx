@@ -1,5 +1,5 @@
 import { Brand } from "@prisma/client";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
     ActionFunction,
     Form,
@@ -10,7 +10,8 @@ import {
 } from "remix";
 
 import prisma from "~/db";
-import { Text, InputGroup, Input, Button, Icon } from "~/modules/ui";
+import { Sidebar } from "~/modules/brand";
+import { Text, InputGroup, Input, Button } from "~/modules/ui";
 
 export const action: ActionFunction = async ({ request }) => {
     const body = new URLSearchParams(await request.text());
@@ -53,15 +54,7 @@ export const loader: LoaderFunction = async ({ params }) => {
 export default function Edit() {
     const { brand } = useLoaderData<LoaderData>();
     return (
-        <aside className="bg-gray-100 min-h-screen w-1/3 p-8">
-            <div className="flex">
-                <Text as="h2" className="flex-grow">
-                    Edit {brand.name}
-                </Text>
-                <Link to="/admin/brand">
-                    <Icon size="lg" icon="faTimes" />
-                </Link>
-            </div>
+        <Sidebar title={`Edit ${brand.name}`}>
             <Form replace method="post">
                 <InputGroup htmlFor="name" label="Brand Name">
                     <input type="hidden" name="uuid" value={brand.uuid} />
@@ -77,7 +70,7 @@ export default function Edit() {
                     <Button type="submit">Edit {brand.name}</Button>
                 </div>
             </Form>
-        </aside>
+        </Sidebar>
     );
 }
 
@@ -89,9 +82,7 @@ export function CatchBoundary() {
         case 401:
         case 404:
             return (
-                <aside className="bg-gray-100 min-h-screen w-1/3 p-8">
-                    <Text as="h2">The brand {params.slug} does not exist</Text>
-                </aside>
+                <Sidebar title={`The brand ${params.slug} does not exist`} />
             );
 
         default:
