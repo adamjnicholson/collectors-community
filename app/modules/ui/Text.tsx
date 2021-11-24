@@ -18,7 +18,7 @@ type Props = PropsWithChildren<{
     className?: string;
 }>;
 
-export default function Text({ as, className = "", ...props }: Props) {
+export function Text({ as, className = "", ...props }: Props) {
     const x = createElement(as, {
         ...props,
         className: `${TEXT_STYLES[as]} ${className}`,

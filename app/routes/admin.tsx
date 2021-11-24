@@ -1,6 +1,6 @@
 import { Outlet } from "remix";
 
-import Text from "~/modules/ui/Text";
+import { Text } from "~/modules/ui";
 
 export default function Index() {
     return (
@@ -15,7 +15,7 @@ export default function Index() {
                     </ul>
                 </nav>
             </aside>
-            <main className="py-8 px-16 flex-grow">
+            <main className=" flex-grow">
                 <Outlet />
             </main>
         </section>

@@ -42,8 +42,11 @@ module.exports = {
         "react/react-in-jsx-scope": "off",
         "react/prop-types": "off",
         "react/require-default-props": "off",
+        "react/jsx-props-no-spreading": "off",
+        "react/button-has-type": "off",
         "@typescript-eslint/no-unused-vars": "error",
         "no-console": "error",
+        "import/prefer-default-export": "off",
         "import/order": [
             "error",
             {
