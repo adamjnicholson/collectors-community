@@ -50,7 +50,10 @@ export const action: ActionFunction = async ({
     };
     const formError = validateUuid(uuid);
 
-    if (Object.values(fieldErrors).some(Boolean) || !!formError) {
+    if (
+        Object.values(fieldErrors).some((error) => error.length > 0) ||
+        formError.length > 0
+    ) {
         return { formError, fieldErrors, fields };
     }
 

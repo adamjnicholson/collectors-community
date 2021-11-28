@@ -1,4 +1,4 @@
-import { ActionFunction, redirect, useActionData } from "remix";
+import { ActionFunction, redirect, useActionData, useTransition } from "remix";
 
 import prisma from "~/db";
 import { Sidebar } from "~/modules/brand";
@@ -41,7 +41,7 @@ export const action: ActionFunction = async ({
         slug: validateSlug(slug),
     };
 
-    if (Object.values(fieldErrors).some(Boolean))
+    if (Object.values(fieldErrors).some((error) => error.length > 0))
         return { fieldErrors, fields };
 
     const existingBrand = await prisma.brand.findFirst({
@@ -83,7 +83,7 @@ export default function New() {
 
     return (
         <Sidebar title="Create a new brand">
-            <Form replace method="post" errors={actionData?.formError}>
+            <Form method="post" errors={actionData?.formError}>
                 <div className="space-y-4">
                     <InputGroup
                         htmlFor="name"

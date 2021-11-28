@@ -35,7 +35,7 @@ export const action: ActionFunction = async ({
 
     const formError = validateUuid(uuid);
 
-    if (formError) {
+    if (formError.length > 0) {
         return {
             formError,
             fields,
