@@ -1,5 +1,7 @@
-import ReactDOMServer from "react-dom/server";
-import { RemixServer, EntryContext } from "remix";
+import { renderToString } from "react-dom/server";
+import { RemixServer } from "remix";
+
+import type { EntryContext } from "remix";
 
 export default function handleRequest(
     request: Request,
@@ -7,7 +9,7 @@ export default function handleRequest(
     responseHeaders: Headers,
     remixContext: EntryContext
 ) {
-    const markup = ReactDOMServer.renderToString(
+    const markup = renderToString(
         <RemixServer context={remixContext} url={request.url} />
     );
 

@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { PropsWithChildren } from "react";
 import {
     Meta,
     Links,
@@ -6,6 +6,8 @@ import {
     LiveReload,
     useCatch,
     LinksFunction,
+    ScrollRestoration,
+    Outlet,
 } from "remix";
 
 import tailwindUrl from "~/styles/tailwind.css";
@@ -14,24 +16,26 @@ export const links: LinksFunction = () => [
     { rel: "stylesheet", href: tailwindUrl },
 ];
 
-function Document({
-    children,
-    title = "",
-}: {
-    children: React.ReactNode;
+type DocumentProps = PropsWithChildren<{
     title?: string;
-}) {
+}>;
+
+function Document({ children, title }: DocumentProps) {
     return (
         <html lang="en">
             <head>
                 <meta charSet="utf-8" />
-                <link rel="icon" href="/favicon.png" type="image/png" />
+                <meta
+                    name="viewport"
+                    content="width=device-width,initial-scale=1"
+                />
                 {title ? <title>{title}</title> : null}
                 <Meta />
                 <Links />
             </head>
             <body>
                 {children}
+                <ScrollRestoration />
                 <Scripts />
                 {process.env.NODE_ENV === "development" && <LiveReload />}
             </body>
@@ -39,6 +43,8 @@ function Document({
     );
 }
 
+// https://remix.run/api/conventions#default-export
+// https://remix.run/api/conventions#route-filenames
 export default function App() {
     return (
         <Document>
@@ -49,39 +55,58 @@ export default function App() {
     );
 }
 
+// https://remix.run/docs/en/v1/api/conventions#catchboundary
 export function CatchBoundary() {
     const caught = useCatch();
 
+    let message;
     switch (caught.status) {
         case 401:
-        case 404:
-            return (
-                <Document title={`${caught.status} ${caught.statusText}`}>
-                    <h1>
-                        {caught.status} {caught.statusText}
-                    </h1>
-                </Document>
+            message = (
+                <p>
+                    Oops! Looks like you tried to visit a page that you do not
+                    have access to.
+                </p>
             );
+            break;
+        case 404:
+            message = (
+                <p>
+                    Oops! Looks like you tried to visit a page that does not
+                    exist.
+                </p>
+            );
+            break;
 
         default:
-            throw new Error(
-                `Unexpected caught response with status: ${caught.status}`
-            );
+            throw new Error(caught.data || caught.statusText);
     }
+
+    return (
+        <Document title={`${caught.status} ${caught.statusText}`}>
+            <h1>
+                {caught.status}: {caught.statusText}
+            </h1>
+            {message}
+        </Document>
+    );
 }
 
+// https://remix.run/docs/en/v1/api/conventions#errorboundary
 export function ErrorBoundary({ error }: { error: Error }) {
     // eslint-disable-next-line no-console
     console.error(error);
-
     return (
-        <Document title="Uh-oh!">
-            <h1>App Error</h1>
-            <pre>{error.message}</pre>
-            <p>
-                Replace this UI with what you want users to see when your app
-                throws uncaught errors.
-            </p>
+        <Document title="Error!">
+            <div>
+                <h1>There was an error</h1>
+                <p>{error.message}</p>
+                <hr />
+                <p>
+                    Hey, developer, you should replace this with what you want
+                    your users to see.
+                </p>
+            </div>
         </Document>
     );
 }

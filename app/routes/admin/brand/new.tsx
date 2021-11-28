@@ -1,4 +1,4 @@
-import { ActionFunction, redirect, useActionData, useTransition } from "remix";
+import { ActionFunction, redirect, useActionData } from "remix";
 
 import prisma from "~/db";
 import { Sidebar } from "~/modules/brand";

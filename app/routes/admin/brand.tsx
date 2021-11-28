@@ -1,7 +1,6 @@
 import { Brand } from "@prisma/client";
 import { PropsWithChildren } from "react";
-import { useMatch, Link } from "react-router-dom";
-import { LoaderFunction, Outlet, useLoaderData } from "remix";
+import { LoaderFunction, Outlet, useLoaderData, Link, useMatches } from "remix";
 
 import prisma from "~/db";
 import { Icon, Text, LinkButton } from "~/modules/ui";
@@ -16,7 +15,9 @@ function Layout({ children }: PropsWithChildren<unknown>) {
 }
 
 function AddBrandButton() {
-    const isIndexRoute = useMatch("/admin/brand");
+    const matches = useMatches();
+    const lastMatch = matches[matches.length - 1];
+    const isIndexRoute = lastMatch.pathname === "/admin/brand";
 
     if (!isIndexRoute) {
         return null;
