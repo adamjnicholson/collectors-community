@@ -1,4 +1,4 @@
-import { Outlet } from "remix";
+import { Outlet, Link } from "remix";
 
 import { Text } from "~/modules/ui";
 
@@ -11,7 +11,7 @@ export default function Index() {
                 <nav>
                     <ul>
                         <li className="font-bold text-blue-700 tracking-wide">
-                            Brands
+                            <Link to="brands">Brands</Link>
                         </li>
                     </ul>
                 </nav>
