@@ -5,7 +5,7 @@ export type Override<OriginalType, OverrideType> = Omit<
     OverrideType;
 
 export type GetActionData<FormInputName extends string> = {
-    formError?: string[];
-    fieldErrors?: Partial<Record<FormInputName, string[]>>;
-    fields?: Record<FormInputName, string>;
+    formError?: string;
+    fieldErrors?: Partial<Record<FormInputName, string>>;
+    fields: Partial<Record<FormInputName, string | null>>;
 };

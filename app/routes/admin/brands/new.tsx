@@ -1,48 +1,93 @@
 import { ActionFunction, redirect, useActionData } from "remix";
+import { z, ZodTypeAny } from "zod";
 
 import prisma from "~/db";
 import { Sidebar } from "~/modules/brand";
 import { InputGroup, Input, Button, Form } from "~/modules/ui";
 import { GetActionData } from "~/types";
 
-function validateName(name: unknown) {
-    if (typeof name !== "string" || name.length < 3) {
-        return [`Brand names must be at least 3 characters long`];
-    }
-
-    return [];
-}
-
-function validateSlug(slug: unknown) {
-    if (typeof slug !== "string" || slug.length < 3) {
-        return [`Slugs must be at least 3 characters long`];
-    }
-
-    return [];
-}
-
 type ActionData = GetActionData<"name" | "slug">;
+
+const nameSchema = z
+    .string({
+        required_error: "Brand name is required",
+        invalid_type_error: "Brand name must only contain letters",
+    })
+    .min(3, {
+        message: "Brand names must be atleast 3 characters long",
+    });
+
+const slugSchema = z
+    .string({
+        required_error: "A slug is required",
+        invalid_type_error: "A slug must only contain letters",
+    })
+    .min(3, {
+        message: "A slug must be atleast 3 characters long",
+    });
+
+type FieldNames<T extends ActionData> = keyof T["fields"];
+type FormSchema<T extends ActionData> = Record<
+    FieldNames<T>,
+    {
+        value: string | null;
+        schema: ZodTypeAny;
+    }
+>;
+
+const validateForm = <T extends ActionData>(validator: FormSchema<T>) => {
+    const fieldNames = Object.keys(validator) as unknown as Array<
+        keyof typeof validator
+    >;
+
+    return fieldNames.reduce<Pick<T, "fields" | "fieldErrors">>(
+        (prev, curr) => {
+            const { value, schema } = validator[curr];
+            const parsedValue = schema.safeParse(value);
+
+            const fields = {
+                ...prev.fields,
+                [curr]: value,
+            };
+
+            const fieldErrors = {
+                ...prev.fieldErrors,
+                [curr]: parsedValue.success ? "" : parsedValue.error.message,
+            };
+
+            return { fields, fieldErrors };
+        },
+        {
+            fields: {},
+            fieldErrors: {},
+        }
+    );
+};
+
+const isFormValid = <T extends ActionData>(fieldErrors: T["fieldErrors"]) =>
+    Object.values(fieldErrors ?? {}).some((error) => !!error);
 
 export const action: ActionFunction = async ({
     request,
 }): Promise<Response | ActionData> => {
     const body = new URLSearchParams(await request.text());
-
     const name = body.get("name");
     const slug = body.get("slug");
 
-    if (typeof name !== "string" || typeof slug !== "string") {
-        return { formError: [`Form not submitted correctly.`] };
-    }
+    const { fields, fieldErrors } = validateForm<ActionData>({
+        name: {
+            value: name,
+            schema: nameSchema,
+        },
+        slug: {
+            value: slug,
+            schema: slugSchema,
+        },
+    });
 
-    const fields = { name, slug };
-    const fieldErrors = {
-        name: validateName(name),
-        slug: validateSlug(slug),
-    };
-
-    if (Object.values(fieldErrors).some((error) => error.length > 0))
+    if (!isFormValid(fieldErrors)) {
         return { fieldErrors, fields };
+    }
 
     const existingBrand = await prisma.brand.findFirst({
         where: {
@@ -59,11 +104,11 @@ export const action: ActionFunction = async ({
 
     if (existingBrand) {
         if (existingBrand.slug === slug) {
-            fieldErrors.slug = ["Slug already exists"];
+            fieldErrors.slug = "Slug already exists";
         }
 
         if (existingBrand.name === name) {
-            fieldErrors.name = ["Brand name already exists"];
+            fieldErrors.name = "Brand name already exists";
         }
 
         return { fields, fieldErrors };
