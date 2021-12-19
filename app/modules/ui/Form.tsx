@@ -1,7 +1,8 @@
-import { PropsWithChildren } from "react";
+import { createContext, PropsWithChildren, useContext } from "react";
 import { Form as RemixForm } from "remix";
 
-import { GetActionData, Override } from "~/types";
+import { Override } from "~/types/global";
+import { ActionFormValidation } from "~/types/remix";
 
 function FormError({ children }: PropsWithChildren<unknown>) {
     if (!children) {
@@ -10,25 +11,65 @@ function FormError({ children }: PropsWithChildren<unknown>) {
     return <p className="text-red-700 pt-2">{children}</p>;
 }
 
+const FormContext = createContext<ActionFormValidation | undefined>(undefined);
+
+const useFormContext = () => {
+    const context = useContext(FormContext);
+
+    if (context === undefined) {
+        throw new Error(
+            "useFormContext must be used within a FormContext.Provider"
+        );
+    }
+
+    return context;
+};
+
+type FormProps = React.ComponentProps<typeof RemixForm> & {
+    context?: ActionFormValidation;
+};
+
+export function Form({ context, children, ...formProps }: FormProps) {
+    return (
+        <FormContext.Provider value={context}>
+            <RemixForm {...formProps}>
+                <FormError>{context?.formError}</FormError>
+                {children}
+            </RemixForm>
+        </FormContext.Provider>
+    );
+}
+
 type LabelProps = PropsWithChildren<unknown>;
 
 export function Label(props: LabelProps) {
     return <span className="block font-bold pb-2" {...props} />;
 }
 
-type HTMLInputProps = React.DetailedHTMLProps<
-    React.LabelHTMLAttributes<HTMLLabelElement>,
-    HTMLLabelElement
->;
-
 type InputProps = React.DetailedHTMLProps<
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
 >;
 
-export function Input(props: InputProps) {
-    return <input className="block w-full px-4 py-2 rounded-md" {...props} />;
+export function Input({ defaultValue, name, ...props }: InputProps) {
+    const formContext = useFormContext();
+
+    const defaultValueToUse = defaultValue ?? formContext.fields[name ?? ""];
+
+    return (
+        <input
+            className="block w-full px-4 py-2 rounded-md"
+            {...props}
+            defaultValue={defaultValueToUse ?? ""}
+            name={name}
+        />
+    );
 }
+
+type HTMLInputProps = React.DetailedHTMLProps<
+    React.LabelHTMLAttributes<HTMLLabelElement>,
+    HTMLLabelElement
+>;
 
 type RequiredInputHTMLFor = Override<
     HTMLInputProps,
@@ -37,7 +78,6 @@ type RequiredInputHTMLFor = Override<
 
 type InputGroupProps = PropsWithChildren<{
     label?: string;
-    errors?: GetActionData;
 }> &
     RequiredInputHTMLFor;
 export function InputGroup({
@@ -45,10 +85,10 @@ export function InputGroup({
     children,
     label,
     className,
-    errors,
     ...props
 }: InputGroupProps) {
-    const inputError = errors?.fieldErrors?.[htmlFor]?.[0];
+    const formContext = useFormContext();
+    const inputError = formContext.fieldErrors?.[htmlFor];
 
     return (
         <label htmlFor={htmlFor} className={`block ${className}`} {...props}>
@@ -56,18 +96,5 @@ export function InputGroup({
             {children}
             <FormError>{inputError}</FormError>
         </label>
-    );
-}
-
-type FormProps = React.ComponentProps<typeof RemixForm> & {
-    errors?: string;
-};
-
-export function Form({ errors, children, ...formProps }: FormProps) {
-    return (
-        <RemixForm {...formProps}>
-            <FormError>{errors?.[0]}</FormError>
-            {children}
-        </RemixForm>
     );
 }

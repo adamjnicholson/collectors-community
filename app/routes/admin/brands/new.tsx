@@ -1,12 +1,15 @@
-import { ActionFunction, redirect, useActionData } from "remix";
+import { redirect, useActionData } from "remix";
 import { z } from "zod";
 
 import prisma from "~/db";
 import { Sidebar } from "~/modules/brand";
 import { InputGroup, Input, Button, Form } from "~/modules/ui";
-import { Awaited, GetActionData } from "~/types";
-
-type ActionFunctionArgs = Parameters<ActionFunction>[0];
+import { validateForm } from "~/modules/utils/validateForm";
+import {
+    ActionData,
+    ActionFormValidation,
+    TypedActionFunction,
+} from "~/types/remix";
 
 const nameSchema = z
     .string({
@@ -31,43 +34,9 @@ const formSchema = z.object({
     slug: slugSchema,
 });
 
-const validateForm = <
-    Fields extends Record<string, string | number | boolean | null | undefined>,
-    Schema extends z.ZodObject<{
-        [Key in keyof Fields]: z.ZodType<NonNullable<Fields[Key]>>;
-    }>
->(
-    fields: Fields,
-    schema: Schema
-) => {
-    const result = schema.safeParse(fields);
-
-    if (!result.success) {
-        return {
-            success: result.success,
-            fields,
-            fieldErrors: result.error.issues.reduce(
-                (fieldErrors, error) => ({
-                    ...fieldErrors,
-                    [error.path[0]]: error.message,
-                }),
-                fields
-            ),
-        };
-    }
-
-    return {
-        success: result.success,
-        fields: result.data,
-        fieldErrors: fields,
-    };
-};
-
-export const action = async ({
-    request,
-}: ActionFunctionArgs): Promise<
-    Response | GetActionData<typeof formSchema>
-> => {
+export const action: TypedActionFunction<
+    ActionFormValidation<typeof formSchema>
+> = async ({ request }) => {
     const body = new URLSearchParams(await request.text());
 
     const result = validateForm(
@@ -120,40 +89,26 @@ export const action = async ({
     return redirect("/admin/brand");
 };
 
-type ActionFormValidation<
-    T extends (args: ActionFunctionArgs) => Promise<Response | GetActionData>,
-    Returned = Awaited<ReturnType<T>>
-> = Returned extends Response ? never : Returned;
-
-const useTypedActionData = <Action extends ActionFunction>() =>
-    useActionData<ActionFormValidation<Action> | undefined>();
-
 export default function New() {
-    const actionData = useTypedActionData<typeof action>();
+    const actionData = useActionData<ActionData<typeof action>>();
 
     return (
         <Sidebar title="Create a new brand">
-            <Form method="post" errors={actionData?.formError}>
+            <Form method="post" context={actionData}>
                 <div className="space-y-4">
-                    <InputGroup
-                        htmlFor="name"
-                        label="Brand Name"
-                        errors={actionData}
-                    >
+                    <InputGroup htmlFor="name" label="Brand Name">
                         <Input
                             id="name"
                             type="text"
                             name="name"
-                            defaultValue={actionData?.fields?.name ?? ""}
                             placeholder="Pokemon"
                         />
                     </InputGroup>
-                    <InputGroup htmlFor="slug" label="Slug" errors={actionData}>
+                    <InputGroup htmlFor="slug" label="Slug">
                         <Input
                             id="slug"
                             type="text"
                             name="slug"
-                            defaultValue={actionData?.fields?.slug ?? ""}
                             placeholder="pokemon"
                         />
                     </InputGroup>
