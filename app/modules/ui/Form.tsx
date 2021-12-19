@@ -35,9 +35,9 @@ type RequiredInputHTMLFor = Override<
     Required<Pick<HTMLInputProps, "htmlFor">>
 >;
 
-type InputGroupProps<T extends string> = PropsWithChildren<{
+type InputGroupProps = PropsWithChildren<{
     label?: string;
-    errors?: GetActionData<T>;
+    errors?: GetActionData;
 }> &
     RequiredInputHTMLFor;
 export function InputGroup({
@@ -47,7 +47,7 @@ export function InputGroup({
     className,
     errors,
     ...props
-}: InputGroupProps<string>) {
+}: InputGroupProps) {
     const inputError = errors?.fieldErrors?.[htmlFor]?.[0];
 
     return (
@@ -60,7 +60,7 @@ export function InputGroup({
 }
 
 type FormProps = React.ComponentProps<typeof RemixForm> & {
-    errors?: string[];
+    errors?: string;
 };
 
 export function Form({ errors, children, ...formProps }: FormProps) {

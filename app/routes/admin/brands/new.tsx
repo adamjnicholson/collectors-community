@@ -1,12 +1,12 @@
 import { ActionFunction, redirect, useActionData } from "remix";
-import { z, ZodTypeAny } from "zod";
+import { z } from "zod";
 
 import prisma from "~/db";
 import { Sidebar } from "~/modules/brand";
 import { InputGroup, Input, Button, Form } from "~/modules/ui";
-import { GetActionData } from "~/types";
+import { Awaited, GetActionData } from "~/types";
 
-type ActionData = GetActionData<"name" | "slug">;
+type ActionFunctionArgs = Parameters<ActionFunction>[0];
 
 const nameSchema = z
     .string({
@@ -63,9 +63,11 @@ const validateForm = <
     };
 };
 
-export const action: ActionFunction = async ({
+export const action = async ({
     request,
-}): Promise<Response | ActionData> => {
+}: ActionFunctionArgs): Promise<
+    Response | GetActionData<typeof formSchema>
+> => {
     const body = new URLSearchParams(await request.text());
 
     const result = validateForm(
@@ -114,11 +116,20 @@ export const action: ActionFunction = async ({
             slug,
         },
     });
+
     return redirect("/admin/brand");
 };
 
+type ActionFormValidation<
+    T extends (args: ActionFunctionArgs) => Promise<Response | GetActionData>,
+    Returned = Awaited<ReturnType<T>>
+> = Returned extends Response ? never : Returned;
+
+const useTypedActionData = <Action extends ActionFunction>() =>
+    useActionData<ActionFormValidation<Action> | undefined>();
+
 export default function New() {
-    const actionData = useActionData<ActionData | undefined>();
+    const actionData = useTypedActionData<typeof action>();
 
     return (
         <Sidebar title="Create a new brand">
@@ -133,7 +144,7 @@ export default function New() {
                             id="name"
                             type="text"
                             name="name"
-                            defaultValue={actionData?.fields?.name}
+                            defaultValue={actionData?.fields?.name ?? ""}
                             placeholder="Pokemon"
                         />
                     </InputGroup>
@@ -142,7 +153,7 @@ export default function New() {
                             id="slug"
                             type="text"
                             name="slug"
-                            defaultValue={actionData?.fields?.slug}
+                            defaultValue={actionData?.fields?.slug ?? ""}
                             placeholder="pokemon"
                         />
                     </InputGroup>
