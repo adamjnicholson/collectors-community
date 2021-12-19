@@ -17,7 +17,7 @@ function Layout({ children }: PropsWithChildren<unknown>) {
 function AddBrandButton() {
     const matches = useMatches();
     const lastMatch = matches[matches.length - 1];
-    const isIndexRoute = lastMatch.pathname === "/admin/brand";
+    const isIndexRoute = lastMatch.pathname === "/admin/brands";
 
     if (!isIndexRoute) {
         return null;

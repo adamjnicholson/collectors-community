@@ -16,7 +16,7 @@ export function Sidebar({ children, title }: Props) {
         <aside className="bg-gray-100 min-h-screen w-1/3 p-8">
             <div className="flex">
                 <SidebarTitle>{title}</SidebarTitle>
-                <Link to="/admin/brand">
+                <Link to="/admin/brands">
                     <Icon size="lg" icon="faTimes" />
                 </Link>
             </div>

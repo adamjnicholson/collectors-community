@@ -48,7 +48,7 @@ export const action: ActionFunction = async ({
         },
     });
 
-    return redirect("/admin/brand");
+    return redirect("/admin/brands");
 };
 
 type LoaderData = {
