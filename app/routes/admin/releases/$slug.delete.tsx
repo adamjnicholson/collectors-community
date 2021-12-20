@@ -1,15 +1,9 @@
-import { Brand } from "@prisma/client";
-import {
-    redirect,
-    useActionData,
-    useCatch,
-    useLoaderData,
-    useParams,
-} from "remix";
+import { Release } from "@prisma/client";
+import { redirect, useActionData, useLoaderData } from "remix";
 import { z } from "zod";
 
 import prisma from "~/db";
-import { brandUuidSchema } from "~/modules/brand/schema";
+import { releaseUuidSchema } from "~/modules/release/schema";
 import { Form, Button, Sidebar } from "~/modules/ui";
 import { validateForm } from "~/modules/utils/validateForm";
 import {
@@ -21,7 +15,7 @@ import {
 } from "~/types/remix";
 
 const formSchema = z.object({
-    uuid: brandUuidSchema,
+    uuid: releaseUuidSchema,
 });
 
 export const action: TypedActionFunction<
@@ -44,75 +38,63 @@ export const action: TypedActionFunction<
         };
     }
 
-    const existingBrand = await prisma.brand.findUnique({
+    const existingRelease = await prisma.release.findUnique({
         where: {
             uuid: result.fieldErrors.uuid ?? "",
         },
     });
 
-    if (!existingBrand) {
+    if (!existingRelease) {
         return {
             fields: result.fields,
             fieldErrors: {},
-            formError: "Brand does not exist",
+            formError: "Release does not exist",
         };
     }
 
-    await prisma.brand.delete({
+    await prisma.release.delete({
         where: {
             uuid: result.fields.uuid,
         },
     });
 
-    return redirect("/admin/brands");
+    return redirect("/admin/releases");
 };
 
-export const loader: TypedLoaderFunction<Brand> = async ({ params }) => {
-    const brand = await prisma.brand.findFirst({
+export const loader: TypedLoaderFunction<Release> = async ({ params }) => {
+    const release = await prisma.release.findFirst({
         where: {
             slug: params.slug,
         },
     });
 
-    if (!brand) {
+    if (!release) {
         throw new Response("Not Found", {
             status: 404,
         });
     }
 
-    return brand;
+    return release;
 };
 
 export default function Edit() {
     const actionData = useActionData<ActionData<typeof action>>();
-    const brand = useLoaderData<LoaderData<typeof loader>>();
+    const release = useLoaderData<LoaderData<typeof loader>>();
 
     return (
-        <Sidebar title={` Delete ${brand.name}`}>
-            <p>Are you sure that you want to delete {brand.name}?</p>
+        <Sidebar title={` Delete ${release.name}`}>
+            <p>Are you sure that you want to delete {release.name}?</p>
             <Form replace method="post" context={actionData}>
-                <input type="hidden" name="uuid" value={brand.uuid} required />
+                <input
+                    type="hidden"
+                    name="uuid"
+                    value={release.uuid}
+                    required
+                />
                 <div className="max-w-md pt-8">
-                    <Button type="submit">Delete {brand.name}</Button>
+                    <Button type="submit">Delete {release.name}</Button>
                 </div>
             </Form>
         </Sidebar>
     );
-}
-
-export function CatchBoundary() {
-    const params = useParams();
-    const caught = useCatch();
-
-    switch (caught.status) {
-        case 401:
-        case 404:
-            return (
-                <Sidebar title={`The brand ${params.slug} does not exist`} />
-            );
-        default:
-            throw new Error(
-                `Unexpected caught response with status: ${caught.status}`
-            );
-    }
 }

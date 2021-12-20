@@ -13,6 +13,9 @@ export default function Index() {
                         <li className="font-bold text-blue-700 tracking-wide">
                             <Link to="brands">Brands</Link>
                         </li>
+                        <li className="font-bold text-blue-700 tracking-wide">
+                            <Link to="releases">Releases</Link>
+                        </li>
                     </ul>
                 </nav>
             </aside>

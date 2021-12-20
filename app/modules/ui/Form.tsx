@@ -1,5 +1,6 @@
 import { createContext, PropsWithChildren, useContext } from "react";
 import { Form as RemixForm } from "remix";
+import { z } from "zod";
 
 import { Override } from "~/types/global";
 import { ActionFormValidation } from "~/types/remix";
@@ -48,26 +49,6 @@ export function Label(props: LabelProps) {
     return <span className="block font-bold pb-2" {...props} />;
 }
 
-type InputProps = React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
->;
-
-export function Input({ defaultValue, name, ...props }: InputProps) {
-    const formContext = useFormContext();
-
-    const defaultValueToUse = defaultValue ?? formContext?.fields[name ?? ""];
-
-    return (
-        <input
-            className="block w-full px-4 py-2 rounded-md"
-            {...props}
-            defaultValue={defaultValueToUse ?? ""}
-            name={name}
-        />
-    );
-}
-
 type HTMLInputProps = React.DetailedHTMLProps<
     React.LabelHTMLAttributes<HTMLLabelElement>,
     HTMLLabelElement
@@ -98,5 +79,62 @@ export function InputGroup({
             {children}
             <FormError>{inputError}</FormError>
         </label>
+    );
+}
+
+type InputProps = React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+>;
+
+const validDefaultValue = z.union([z.string(), z.number(), z.undefined()]);
+const getTypecastedDefaultValue = (
+    defaultValue: InputProps["defaultValue"] | null | boolean
+) => {
+    const parseDefaultValue = validDefaultValue.safeParse(defaultValue);
+    return parseDefaultValue.success
+        ? parseDefaultValue.data
+        : defaultValue?.toString();
+};
+
+export function Input({ defaultValue, name, ...props }: InputProps) {
+    const formContext = useFormContext();
+
+    const defaultValueToUse = defaultValue ?? formContext?.fields[name ?? ""];
+
+    return (
+        <input
+            className="block w-full px-4 py-2 rounded-md"
+            {...props}
+            defaultValue={getTypecastedDefaultValue(defaultValueToUse)}
+            name={name}
+        />
+    );
+}
+
+type SelectProps = React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLSelectElement>,
+    HTMLSelectElement
+>;
+
+export function Select({
+    defaultValue,
+    name,
+    ...props
+}: PropsWithChildren<SelectProps>) {
+    const formContext = useFormContext();
+
+    const defaultValueToUse =
+        defaultValue ?? formContext?.fields[name ?? ""] ?? "";
+
+    return (
+        <div className="px-4 bg-white rounded-md">
+            <select
+                className="block w-full py-2"
+                name={name}
+                defaultValue={getTypecastedDefaultValue(defaultValueToUse)}
+                {...props}
+            />
+        </div>
     );
 }

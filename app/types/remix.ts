@@ -5,7 +5,7 @@ import { NullableObject, Awaited } from "~/types/global";
 
 export type ActionFormValidation<
     Schema extends z.AnyZodObject = z.ZodObject<
-        Record<string, z.ZodType<string>>
+        Record<string, z.ZodType<string | number | boolean>>
     >
 > = {
     formError?: string | null;

@@ -1,4 +1,4 @@
-import { Brand } from "@prisma/client";
+import { Release } from "@prisma/client";
 import { PropsWithChildren } from "react";
 import { Outlet, useLoaderData, Link, useMatches } from "remix";
 
@@ -15,10 +15,10 @@ function Layout({ children }: PropsWithChildren<unknown>) {
     );
 }
 
-function AddBrandButton() {
+function AddReleaseButton() {
     const matches = useMatches();
     const lastMatch = matches[matches.length - 1];
-    const isIndexRoute = lastMatch.pathname === "/admin/brands";
+    const isIndexRoute = lastMatch.pathname === "/admin/releases";
 
     if (!isIndexRoute) {
         return null;
@@ -27,52 +27,52 @@ function AddBrandButton() {
     return (
         <div className="pt-8">
             <LinkButton to="new">
-                <Icon icon="faPlus" /> Add Brand
+                <Icon icon="faPlus" /> Add Release
             </LinkButton>
         </div>
     );
 }
 
-export const loader: TypedLoaderFunction<Brand[]> = async () => {
-    const allBrands = await prisma.brand.findMany();
+export const loader: TypedLoaderFunction<Release[]> = async () => {
+    const allReleases = await prisma.release.findMany();
 
-    return allBrands;
+    return allReleases;
 };
 
 export default function Index() {
-    const brands = useLoaderData<LoaderData<typeof loader>>();
+    const releases = useLoaderData<LoaderData<typeof loader>>();
 
-    if (!brands.length) {
+    if (!releases.length) {
         return (
             <Layout>
-                <Text as="h2">You have no brands</Text>
-                <AddBrandButton />
+                <Text as="h2">You have no releases</Text>
+                <AddReleaseButton />
             </Layout>
         );
     }
 
     return (
         <Layout>
-            <Text as="h2">Brands</Text>
+            <Text as="h2">Releases</Text>
             <ul className="space-y-2">
-                {brands.map((brand) => (
+                {releases.map((release) => (
                     <li
-                        key={brand.uuid}
+                        key={release.uuid}
                         className="border-b border-gray-200 block"
                     >
                         <div className="flex">
                             <span className="pb-2 block flex-grow">
-                                {brand.name}
+                                {release.name}
                             </span>
                             <nav>
                                 <ul className="flex space-x-4">
                                     <li>
-                                        <Link to={`${brand.slug}/edit`}>
+                                        <Link to={`${release.slug}/edit`}>
                                             <Icon icon="faPencilAlt" />
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link to={`${brand.slug}/delete`}>
+                                        <Link to={`${release.slug}/delete`}>
                                             <Icon icon="faTrash" />
                                         </Link>
                                     </li>
@@ -82,7 +82,7 @@ export default function Index() {
                     </li>
                 ))}
             </ul>
-            <AddBrandButton />
+            <AddReleaseButton />
         </Layout>
     );
 }

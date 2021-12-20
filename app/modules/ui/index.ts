@@ -3,3 +3,4 @@ export * from "~/modules/ui/Link";
 export * from "~/modules/ui/Form";
 export * from "~/modules/ui/Icon";
 export * from "~/modules/ui/Text";
+export * from "~/modules/ui/Sidebar";

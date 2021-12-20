@@ -2,9 +2,8 @@ import { redirect, useActionData } from "remix";
 import { z } from "zod";
 
 import prisma from "~/db";
-import { Sidebar } from "~/modules/brand";
 import { brandNameSchema, brandSlugSchema } from "~/modules/brand/schema";
-import { InputGroup, Input, Button, Form } from "~/modules/ui";
+import { InputGroup, Input, Button, Form, Sidebar } from "~/modules/ui";
 import { validateForm } from "~/modules/utils/validateForm";
 import {
     ActionData,
@@ -85,6 +84,7 @@ export default function New() {
                             type="text"
                             name="name"
                             placeholder="Pokemon"
+                            required
                         />
                     </InputGroup>
                     <InputGroup htmlFor="slug" label="Slug">
@@ -93,6 +93,7 @@ export default function New() {
                             type="text"
                             name="slug"
                             placeholder="pokemon"
+                            required
                         />
                     </InputGroup>
                 </div>

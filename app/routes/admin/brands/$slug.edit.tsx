@@ -4,13 +4,8 @@ import { redirect, useActionData, useCatch, useLoaderData } from "remix";
 import { z } from "zod";
 
 import prisma from "~/db";
-import { Sidebar } from "~/modules/brand";
-import {
-    brandNameSchema,
-    brandSlugSchema,
-    brandUuidSchema,
-} from "~/modules/brand/schema";
-import { InputGroup, Input, Button, Form } from "~/modules/ui";
+import { brandNameSchema, brandUuidSchema } from "~/modules/brand/schema";
+import { InputGroup, Input, Button, Form, Sidebar } from "~/modules/ui";
 import { validateForm } from "~/modules/utils/validateForm";
 import {
     ActionData,
@@ -100,12 +95,19 @@ export default function Edit() {
         <Sidebar title={`Edit ${brand.name}`}>
             <Form replace method="post" context={actionData}>
                 <InputGroup htmlFor="name" label="Brand Name">
-                    <input type="hidden" name="uuid" value={brand.uuid} />
+                    <input
+                        type="hidden"
+                        name="uuid"
+                        value={brand.uuid}
+                        required
+                    />
                     <Input
                         id="name"
                         type="text"
                         name="name"
                         placeholder="Pokemon"
+                        defaultValue={actionData?.fields.name ?? brand.name}
+                        required
                     />
                 </InputGroup>
                 <div className="max-w-md pt-8">
