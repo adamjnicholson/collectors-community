@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
 
-import { Override } from "~/types";
+import { Override } from "~/types/global";
 
 type HTMLButtonProps = React.DetailedHTMLProps<
     React.ButtonHTMLAttributes<HTMLButtonElement>,

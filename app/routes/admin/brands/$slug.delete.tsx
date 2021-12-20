@@ -1,61 +1,66 @@
 import { Brand } from "@prisma/client";
-import { useParams } from "react-router-dom";
 import {
-    ActionFunction,
-    LoaderFunction,
     redirect,
     useActionData,
     useCatch,
     useLoaderData,
+    useParams,
 } from "remix";
+import { z } from "zod";
 
 import prisma from "~/db";
 import { Sidebar } from "~/modules/brand";
+import { brandUuidSchema } from "~/modules/brand/schema";
 import { Form, Button } from "~/modules/ui";
-import { GetActionData } from "~/types";
+import { validateForm } from "~/modules/utils/validateForm";
+import {
+    ActionData,
+    ActionFormValidation,
+    LoaderData,
+    TypedActionFunction,
+    TypedLoaderFunction,
+} from "~/types/remix";
 
-function validateUuid(name: unknown) {
-    if (typeof name !== "string" || name.length < 1) {
-        return [`Form not submitted correctly`];
-    }
+const formSchema = z.object({
+    uuid: brandUuidSchema,
+});
 
-    return [];
-}
-
-type ActionData = GetActionData<"uuid">;
-
-export const action: ActionFunction = async ({
-    request,
-}): Promise<Response | ActionData> => {
+export const action: TypedActionFunction<
+    ActionFormValidation<typeof formSchema>
+> = async ({ request }) => {
     const body = new URLSearchParams(await request.text());
 
-    const uuid = body.get("uuid") ?? "";
+    const result = validateForm(
+        {
+            uuid: body.get("uuid"),
+        },
+        formSchema
+    );
 
-    const fields = { uuid };
-
-    const formError = validateUuid(uuid);
-
-    if (formError.length > 0) {
+    if (!result.success) {
         return {
-            formError,
-            fields,
+            formError: result.fieldErrors.uuid,
+            fieldErrors: {},
+            fields: result.fieldErrors,
         };
     }
 
-    await prisma.brand.delete({
-        where: {
-            uuid,
-        },
-    });
+    try {
+        await prisma.brand.delete({
+            where: {
+                uuid: result.fields.uuid,
+            },
+        });
 
-    return redirect("/admin/brands");
+        return redirect("/admin/brands");
+    } catch (e) {
+        throw new Response("Not Found", {
+            status: 404,
+        });
+    }
 };
 
-type LoaderData = {
-    brand: Brand;
-};
-
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: TypedLoaderFunction<Brand> = async ({ params }) => {
     const brand = await prisma.brand.findFirst({
         where: {
             slug: params.slug,
@@ -68,17 +73,17 @@ export const loader: LoaderFunction = async ({ params }) => {
         });
     }
 
-    return { brand };
+    return brand;
 };
 
 export default function Edit() {
-    const actionData = useActionData<ActionData>();
-    const { brand } = useLoaderData<LoaderData>();
+    const actionData = useActionData<ActionData<typeof action>>();
+    const brand = useLoaderData<LoaderData<typeof loader>>();
 
     return (
         <Sidebar title={` Delete ${brand.name}`}>
             <p>Are you sure that you want to delete {brand.name}?</p>
-            <Form replace method="post" errors={actionData?.formError}>
+            <Form replace method="post" context={actionData}>
                 <input type="hidden" name="uuid" value={brand.uuid} />
                 <div className="max-w-md pt-8">
                     <Button type="submit">Delete {brand.name}</Button>

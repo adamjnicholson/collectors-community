@@ -9,7 +9,7 @@ import {
     FontAwesomeIconProps,
 } from "@fortawesome/react-fontawesome";
 
-import { Override } from "~/types";
+import { Override } from "~/types/global";
 
 const ICONS = {
     faPlus,

@@ -11,12 +11,14 @@ function FormError({ children }: PropsWithChildren<unknown>) {
     return <p className="text-red-700 pt-2">{children}</p>;
 }
 
-const FormContext = createContext<ActionFormValidation | undefined>(undefined);
+const FormContext = createContext<ActionFormValidation | undefined | null>(
+    null
+);
 
 const useFormContext = () => {
     const context = useContext(FormContext);
 
-    if (context === undefined) {
+    if (context === null) {
         throw new Error(
             "useFormContext must be used within a FormContext.Provider"
         );
@@ -54,7 +56,7 @@ type InputProps = React.DetailedHTMLProps<
 export function Input({ defaultValue, name, ...props }: InputProps) {
     const formContext = useFormContext();
 
-    const defaultValueToUse = defaultValue ?? formContext.fields[name ?? ""];
+    const defaultValueToUse = defaultValue ?? formContext?.fields[name ?? ""];
 
     return (
         <input
@@ -88,7 +90,7 @@ export function InputGroup({
     ...props
 }: InputGroupProps) {
     const formContext = useFormContext();
-    const inputError = formContext.fieldErrors?.[htmlFor];
+    const inputError = formContext?.fieldErrors?.[htmlFor];
 
     return (
         <label htmlFor={htmlFor} className={`block ${className}`} {...props}>

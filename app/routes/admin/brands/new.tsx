@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import prisma from "~/db";
 import { Sidebar } from "~/modules/brand";
+import { brandNameSchema, brandSlugSchema } from "~/modules/brand/schema";
 import { InputGroup, Input, Button, Form } from "~/modules/ui";
 import { validateForm } from "~/modules/utils/validateForm";
 import {
@@ -11,27 +12,9 @@ import {
     TypedActionFunction,
 } from "~/types/remix";
 
-const nameSchema = z
-    .string({
-        required_error: "Brand name is required",
-        invalid_type_error: "Brand name must only contain letters",
-    })
-    .min(3, {
-        message: "Brand names must be atleast 3 characters long",
-    });
-
-const slugSchema = z
-    .string({
-        required_error: "A slug is required",
-        invalid_type_error: "A slug must only contain letters",
-    })
-    .min(3, {
-        message: "A slug must be atleast 3 characters long",
-    });
-
 const formSchema = z.object({
-    name: nameSchema,
-    slug: slugSchema,
+    name: brandNameSchema,
+    slug: brandSlugSchema,
 });
 
 export const action: TypedActionFunction<
@@ -86,7 +69,7 @@ export const action: TypedActionFunction<
         },
     });
 
-    return redirect("/admin/brand");
+    return redirect("/admin/brands");
 };
 
 export default function New() {

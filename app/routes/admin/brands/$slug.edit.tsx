@@ -1,61 +1,53 @@
 import { Brand } from "@prisma/client";
 import { useParams } from "react-router-dom";
-import {
-    ActionFunction,
-    LoaderFunction,
-    redirect,
-    useActionData,
-    useCatch,
-    useLoaderData,
-} from "remix";
+import { redirect, useActionData, useCatch, useLoaderData } from "remix";
+import { z } from "zod";
 
 import prisma from "~/db";
 import { Sidebar } from "~/modules/brand";
+import {
+    brandNameSchema,
+    brandSlugSchema,
+    brandUuidSchema,
+} from "~/modules/brand/schema";
 import { InputGroup, Input, Button, Form } from "~/modules/ui";
-import { GetActionData } from "~/types";
+import { validateForm } from "~/modules/utils/validateForm";
+import {
+    ActionData,
+    ActionFormValidation,
+    LoaderData,
+    TypedActionFunction,
+    TypedLoaderFunction,
+} from "~/types/remix";
 
-function validateName(name: unknown) {
-    if (typeof name !== "string" || name.length < 3) {
-        return [`Brand names must be at least 3 characters long`];
-    }
+const formSchema = z.object({
+    name: brandNameSchema,
+    uuid: brandUuidSchema,
+});
 
-    return [];
-}
-
-function validateUuid(name: unknown) {
-    if (typeof name !== "string" || name.length < 1) {
-        return [`Form not submitted correctly`];
-    }
-
-    return [];
-}
-
-type ActionData = GetActionData<"name" | "uuid">;
-
-export const action: ActionFunction = async ({
-    request,
-}): Promise<Response | ActionData> => {
+export const action: TypedActionFunction<
+    ActionFormValidation<typeof formSchema>
+> = async ({ request }) => {
     const body = new URLSearchParams(await request.text());
 
-    const name = body.get("name");
-    const uuid = body.get("uuid");
+    const result = validateForm(
+        {
+            name: body.get("name"),
+            uuid: body.get("uuid"),
+        },
+        formSchema
+    );
 
-    if (typeof name !== "string" || typeof uuid !== "string") {
-        return { formError: [`Form not submitted correctly.`] };
+    if (!result.success) {
+        return {
+            formError: result.fieldErrors.uuid,
+            fields: result.fields,
+            fieldErrors: result.fieldErrors,
+        };
     }
 
-    const fields = { name, uuid };
-    const fieldErrors = {
-        name: validateName(name),
-    };
-    const formError = validateUuid(uuid);
-
-    if (
-        Object.values(fieldErrors).some((error) => error.length > 0) ||
-        formError.length > 0
-    ) {
-        return { formError, fieldErrors, fields };
-    }
+    const { fields } = result;
+    const { name, uuid } = fields;
 
     const existingBrand = await prisma.brand.findUnique({
         where: {
@@ -66,7 +58,7 @@ export const action: ActionFunction = async ({
     if (existingBrand) {
         return {
             fieldErrors: {
-                name: ["Brand name already exists"],
+                name: "Brand name already exists",
             },
             fields,
         };
@@ -84,11 +76,7 @@ export const action: ActionFunction = async ({
     return redirect("/admin/brands");
 };
 
-type LoaderData = {
-    brand: Brand;
-};
-
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: TypedLoaderFunction<Brand> = async ({ params }) => {
     const brand = await prisma.brand.findFirst({
         where: {
             slug: params.slug,
@@ -101,26 +89,22 @@ export const loader: LoaderFunction = async ({ params }) => {
         });
     }
 
-    return { brand };
+    return brand;
 };
 
 export default function Edit() {
-    const actionData = useActionData<ActionData>();
-    const { brand } = useLoaderData<LoaderData>();
+    const actionData = useActionData<ActionData<typeof action>>();
+    const brand = useLoaderData<LoaderData<typeof loader>>();
+
     return (
         <Sidebar title={`Edit ${brand.name}`}>
-            <Form replace method="post" errors={actionData?.formError}>
-                <InputGroup
-                    htmlFor="name"
-                    label="Brand Name"
-                    errors={actionData}
-                >
+            <Form replace method="post" context={actionData}>
+                <InputGroup htmlFor="name" label="Brand Name">
                     <input type="hidden" name="uuid" value={brand.uuid} />
                     <Input
                         id="name"
                         type="text"
                         name="name"
-                        defaultValue={brand.name}
                         placeholder="Pokemon"
                     />
                 </InputGroup>
