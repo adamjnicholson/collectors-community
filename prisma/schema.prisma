@@ -11,7 +11,17 @@ datasource db {
 }
 
 model Brand {
-  uuid String @id @default(uuid())
-  slug String @unique
-  name String @unique
+  uuid     String    @id @default(uuid())
+  slug     String    @unique
+  name     String    @unique
+  releases Release[]
+}
+
+model Release {
+  uuid      String @id @default(uuid())
+  slug      String @unique
+  name      String @unique
+  itemCount Int
+  brand     Brand  @relation(fields: [brandUuid], references: [uuid])
+  brandUuid String
 }
