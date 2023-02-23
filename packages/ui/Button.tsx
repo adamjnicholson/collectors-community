@@ -1,4 +1,22 @@
-import * as React from "react";
-export const Button = () => {
-  return <button>Boop</button>;
+export type ButtonProps = {
+  primary?: boolean;
+  size?: "small" | "large";
+  label?: string;
+};
+
+export const Button = ({
+  primary = false,
+  label = "Boop",
+  size = "small",
+}: ButtonProps) => {
+  return (
+    <button
+      style={{
+        backgroundColor: primary ? "red" : "blue",
+        fontSize: size === "large" ? "24px" : "14px",
+      }}
+    >
+      {label}
+    </button>
+  );
 };
