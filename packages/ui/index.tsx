@@ -1,3 +1,2 @@
-import * as React from "react";
-export { Button } from "./Button";
-export type { ButtonProps } from "./Button";
+export { Button } from "./src/Button/Button";
+export type { ButtonProps } from "./src/Button/Button";

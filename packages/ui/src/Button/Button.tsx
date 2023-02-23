@@ -1,3 +1,5 @@
+import { container } from "./Button.css";
+
 export type ButtonProps = {
   primary?: boolean;
   size?: "small" | "large";
@@ -11,6 +13,7 @@ export const Button = ({
 }: ButtonProps) => {
   return (
     <button
+      className={container}
       style={{
         backgroundColor: primary ? "red" : "blue",
         fontSize: size === "large" ? "24px" : "14px",

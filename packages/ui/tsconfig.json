@@ -1,5 +1,6 @@
 {
-  "extends": "tsconfig/react-library.json",
-  "include": ["."],
-  "exclude": ["dist", "build", "node_modules"]
+  "extends": "tsconfig/react-library",
+  "include": ["src", "vite-env.d.ts"],
+  "exclude": ["dist", "build", "node_modules"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

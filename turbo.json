@@ -7,6 +7,10 @@
       "dependsOn": ["^build", "^db:generate"],
       "outputs": ["dist/**", ".next/**"]
     },
+    "dev": {
+      "dependsOn": ["^db:generate"],
+      "cache": false
+    },
     "lint": {
       "outputs": []
     },
@@ -14,9 +18,8 @@
       "outputs": [],
       "outputMode": "errors-only"
     },
-    "dev": {
-      "dependsOn": ["^db:generate"],
-      "cache": false
+    "storybook": {
+      "outputs": []
     },
     "db:generate": {
       "cache": false
