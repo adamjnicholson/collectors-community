@@ -9,21 +9,21 @@ const defaultCapsizeValues = precomputeValues({
   fontMetrics,
 });
 
-const vars = createThemeContract({
-  capsize: {
-    body14: defaultCapsizeValues,
-    body18: defaultCapsizeValues,
+export const vars = createThemeContract({
+  fontSize: {
+    "14": defaultCapsizeValues,
+    "18": defaultCapsizeValues,
   },
 });
 
 export const lightThemeClassName = createTheme(vars, {
-  capsize: {
-    body14: precomputeValues({
+  fontSize: {
+    "14": precomputeValues({
       fontSize: 14,
       leading: 21,
       fontMetrics,
     }),
-    body18: precomputeValues({
+    "18": precomputeValues({
       fontSize: 18,
       leading: 22,
       fontMetrics,
