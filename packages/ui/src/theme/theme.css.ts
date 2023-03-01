@@ -10,7 +10,17 @@ const defaultCapsizeValues = precomputeValues({
 });
 
 export const vars = createThemeContract({
+  borderWidth: {
+    "1": "",
+  },
+  borderRadius: {
+    "8": "",
+  },
+  color: {
+    "gray-400": "",
+  },
   fontSize: {
+    "13": defaultCapsizeValues,
     "14": defaultCapsizeValues,
     "18": defaultCapsizeValues,
   },
@@ -26,7 +36,21 @@ export const vars = createThemeContract({
 export type Vars = typeof vars;
 
 export const lightThemeClassName = createTheme(vars, {
+  borderWidth: {
+    "1": "1px",
+  },
+  borderRadius: {
+    "8": "8px",
+  },
+  color: {
+    "gray-400": "#82868C",
+  },
   fontSize: {
+    "13": precomputeValues({
+      fontSize: 13,
+      leading: 16,
+      fontMetrics,
+    }),
     "14": precomputeValues({
       fontSize: 14,
       leading: 21,
