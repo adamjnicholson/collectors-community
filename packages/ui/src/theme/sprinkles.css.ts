@@ -3,11 +3,13 @@ import { vars } from "./theme.css";
 
 const unresponsiveProperties = defineProperties({
   properties: {
+    display: ["block", "flex"],
+    flexDirection: ["column"],
     fontWeight: ["500", "600", "800"],
     fontSize: vars.fontSize,
+    width: vars.width,
   },
 });
 
-export const sprinkles = createSprinkles(unresponsiveProperties);
-
-export type Sprinkles = Parameters<typeof sprinkles>[0];
+export const baseSprinkles = createSprinkles(unresponsiveProperties);
+export type BaseSprinkles = Parameters<typeof baseSprinkles>[0];

@@ -14,7 +14,16 @@ export const vars = createThemeContract({
     "14": defaultCapsizeValues,
     "18": defaultCapsizeValues,
   },
+  space: {
+    "2": "",
+    "4": "",
+  },
+  width: {
+    full: "",
+  },
 });
+
+export type Vars = typeof vars;
 
 export const lightThemeClassName = createTheme(vars, {
   fontSize: {
@@ -28,5 +37,12 @@ export const lightThemeClassName = createTheme(vars, {
       leading: 22,
       fontMetrics,
     }),
+  },
+  space: {
+    "2": "8px",
+    "4": "16px",
+  },
+  width: {
+    full: "100%",
   },
 });
